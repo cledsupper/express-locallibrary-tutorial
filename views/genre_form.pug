@@ -1,0 +1,15 @@
+extends layout
+
+block content
+  h1= title
+
+  form(method='POST' action='')
+    div.form-group
+      label(for='name') Gênero:
+      input#name.form-control(type='text' placeholder='Fantasia, Poesia, etc.' name='name' value=(undefined===genre ? '' : genre.name))
+    button.btn.btn-primary(type='submit') Adicionar
+
+  if errors
+    ul
+      for error in errors
+        li!= error.msg

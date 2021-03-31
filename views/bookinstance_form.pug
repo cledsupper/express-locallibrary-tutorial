@@ -1,0 +1,44 @@
+extends layout
+
+block content
+  h1= title
+
+  form(method='POST' action='')
+    div.form-group
+      label(for='book') Livro:
+      select#book.form-control(type='select' placeholder='Selecionar livro' name='book' required='true')
+        - book_list.sort(function(a, b) { let textA = a.title.toUpperCase(); let textB = b.title.toUpperCase(); return (textA < textB) ? -1 : (textA > textB) ? 1 : 0; });
+        for book in book_list
+          if bookinstance
+            option(value=book._id selected=(bookinstance.book._id.toString() === book._id.toString() ? 'selected' : false)) #{ book.title }
+          else
+            option(value=book._id) #{ book.title }
+
+    div.form-group
+      label(for='imprint') Editora:
+      input#imprint.form-control(type='text' placeholder='Editora e data' name='imprint' required='true' value=(undefined === bookinstance ? '' : bookinstance.imprint))
+
+    div.form-group
+      label(for='due_back') Data de retorno:
+      input#due_back.form-control(type='date' name='due_back' value=(undefined === bookinstance ? '' : bookinstance.due_back_yyyy_mm_dd))
+
+    div.form-group
+      label(for='status') Estado:
+      select#status.form-control(type='select' placeholder='Estado da cópia' name='status' required='true')
+        if bookinstance
+          option(value='Em manutenção' selected=(bookinstance.status==='Em manutenção' ? 'selected' : false)) Em manutenção
+          option(value='Disponível' selected=(bookinstance.status==='Disponível' ? 'selected' : false)) Disponível
+          option(value='Emprestado' selected=(bookinstance.status==='Emprestado' ? 'selected' : false)) Emprestado
+          option(value='Reservado' selected=(bookinstance.status==='Reservado' ? 'selected' : false)) Reservado
+        else
+          option(value='Em manutenção') Em manutenção
+          option(value='Disponível') Disponível
+          option(value='Emprestado') Emprestado
+          option(value='Reservado') Reservado
+
+    button.btn.btn-primary(type='submit') Salvar
+
+  if errors
+    ul
+      for error in errors
+        li!= error.msg

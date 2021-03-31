@@ -1,0 +1,25 @@
+extends layout
+
+block content
+  h1 Gênero: #{title}
+
+  div(style='margin-left:20px;margin-top:20px')
+
+    h4 Livros
+
+    dl
+      each book in genre_books
+        dt
+          a(href=book.url) #{book.title}
+        dd #{book.summary}
+
+      else
+        p Não há livros para este gênero.
+  
+  hr
+  p
+    a(href=genre.url+'/update')
+      button.btn.btn-warning Alterar gênero
+  p
+    a(href=genre.url+'/delete')
+      button.btn.btn-danger Excluir gênero

@@ -1,0 +1,27 @@
+extends layout
+
+block content
+  h1 ID: #{book_instance._id}
+
+  p #[strong Título]: 
+    a(href=book_instance.book.url) #{book_instance.book.title}
+  p #[strong Edição]: #{book_instance.imprint}
+
+  p #[strong Estado]: 
+    if book_instance.status == 'Disponível'
+      span.text-success #{book_instance.status}
+    else if book_instance.status == 'Em manutenção'
+      span.text-danger #{book_instance.status}
+    else
+      span.text-warning #{book_instance.status}
+
+  if book_instance.status != 'Disponível'
+    p #[strong Retorno em]: #{book_instance.due_back_formatted}
+
+  hr
+  p
+    a(href=book_instance.url+'/update')
+      button.btn.btn-warning Atualizar cópia
+  p
+    a(href=book_instance.url+'/delete')
+      button.btn.btn-danger Excluir cópia

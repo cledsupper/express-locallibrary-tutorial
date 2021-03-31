@@ -1,0 +1,25 @@
+extends layout
+
+block content
+  h1 #{title}: #{ author.name }
+  p= author.lifespan
+
+  if author_books.length
+    p #[strong Exclua os seguintes livros antes de tentar excluir o autor.]
+
+    div(style='margin-left: 20px; margin-top: 20px')
+
+      h4 Livros
+      dl
+        each book in author_books
+          dt
+            a(href=book.url) #{book.title}
+          dd #{book.summary}
+
+  else
+    p #[strong Você quer mesmo excluir o autor?]
+
+    form(method='POST' action='')
+      input#authorid.form-control(type='hidden' name='authorid' value=author._id required='true')
+ 
+      button.btn.btn-primary(type='submit') EXCLUIR

@@ -1,0 +1,18 @@
+extends layout
+
+block content
+  h1= title
+
+  p Testando a página de #[em testes].
+  p Vá para 
+    a(href='/catalog/authors') autores
+    | , ou não.
+
+  //- É necessário entender isto mais tarde
+  #container.col
+    if title
+      p O título da página foi definido.
+    else
+      p O título da página não foi definido.
+
+  h3 Fim

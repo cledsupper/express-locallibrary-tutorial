@@ -1,0 +1,18 @@
+extends layout
+
+block content
+  h1= title
+  p Bem vindo à #[em Local Library], um website muito simples em Express desenvolvido como um tutorial da Mozilla Developer Network.
+
+  h1 Conteúdo dinâmico
+
+  if error
+    p Houve um erro ao verificar os registros.
+  else
+    p A Biblioteca Local tem os números de registros abaixo:
+    ul
+      li #[strong Livros]: !{data.book_count}
+      li #[strong Cópias]: !{data.book_instance_count}
+      li #[strong Cópias disponíveis]: !{data.book_instance_available_count}
+      li #[strong Autores]: !{data.author_count}
+      li #[strong Gêneros]: !{data.genre_count}

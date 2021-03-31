@@ -1,0 +1,22 @@
+extends layout
+
+block content
+  h1 #{title}: #{bookinstance._id}
+
+  p #[strong Estado]: 
+    if bookinstance.status == 'Disponível'
+      span.text-success #{bookinstance.status}
+    else if bookinstance.status == 'Em manutenção'
+      span.text-danger #{bookinstance.status}
+    else
+      span.text-warning #{bookinstance.status}
+  
+  if bookinstance.status != 'Disponível'
+    p #[strong Retorno em]: #{bookinstance.due_back_formatted}
+
+  p #[strong Você quer mesmo excluir esta cópia?]
+
+  form(method='POST' action='')
+    input(type='hidden' name='biid' value=bookinstance._id required='true')
+
+    button.btn.btn-danger(type='submit') EXCLUIR

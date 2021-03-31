@@ -1,0 +1,23 @@
+extends layout
+
+block content
+  h1 #{title}: #{genre.name}
+
+  if books.length
+    p #[strong Exclua os seguintes livros antes de excluir o gênero.]
+
+    div(style='margin-left: 20px; margin-top: 20px')
+      h1 Livros
+      dl
+        each book in books
+          dt
+            a(href=book.url) #{book.title}
+          dd #{book.summary}
+
+  else
+    p #[strong Você quer mesmo excluir este gênero?]
+
+    form(method='POST' action='')
+      input(type='hidden' name='genreid' value=genre._id required='true')
+
+      button.btn.btn-danger(type='submit') EXCLUIR

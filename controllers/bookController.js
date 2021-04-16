@@ -5,6 +5,7 @@ var Genre = require('../models/genre')
 const { body, validationResult } = require('express-validator')
 
 var async = require('async')
+var debug = require('debug')('book')
 
 exports.index = function(req, res) {
     async.parallel({
@@ -24,7 +25,7 @@ exports.index = function(req, res) {
         Genre.countDocuments({}, callback)
       }
     }, function(err, results) {
-      if (err) console.log(err)
+      if (err) debug('query error: ' + err)
       res.render('index', { title: 'Local Library Home', error: err, data: results })
     })
 }
@@ -33,7 +34,10 @@ exports.book_list = function(req, res, next) {
     Book.find({}, "title author")
         .populate("author")
         .exec(function(err, list_books) {
-            if (err) return next(err)
+            if (err) {
+                debug('query error: ' + err)
+                return next(err)
+            }
             res.render('book_list', { title: 'Lista de livros', book_list: list_books })
         })
 }
@@ -52,7 +56,10 @@ exports.book_detail = function(req, res, next) {
                 .exec(callback)
         }
     }, function(err, results) {
-        if (err) return next(err)
+        if (err) {
+            debug('query error: ' + err)
+            return next(err)
+        }
         if (results.book == null) {
             var err = new Error('Livro não existe')
             err.status = 404
@@ -64,7 +71,7 @@ exports.book_detail = function(req, res, next) {
 }
 
 exports.book_create_get = function(req, res, next) {
-    
+
     async.parallel({
         authors: function(callback) {
             Author.find(callback)
@@ -73,7 +80,10 @@ exports.book_create_get = function(req, res, next) {
             Genre.find(callback)
         }
     }, function(err, results) {
-        if (err) return next(err)
+        if (err) {
+            debug('query error: ' + err)
+            return next(err)
+        }
         res.render('book_form', { title: 'Adicionar livro', authors: results.authors, genres: results.genres })
     })
 }
@@ -119,7 +129,10 @@ exports.book_create_post = [
                     Genre.find(callback)
                 }
             }, function(err, results) {
-                if (err) return next(err)
+                if (err) {
+                    debug('query error: ' + err)
+                    return next(err)
+                }
 
                 // Rechecar os gêneros
                 for (let i=0; i < results.genres.length; i++) {
@@ -133,7 +146,10 @@ exports.book_create_post = [
         }
         else {
             book.save(function(err) {
-                if (err) return next(err)
+                if (err) {
+                    debug('save error: ' + err)
+                    return next(err)
+                }
                 res.redirect(book.url)
             })
         }
@@ -154,7 +170,10 @@ exports.book_update_get = function(req, res, next) {
             Genre.find(callback)
         }
     }, function(err, results) {
-        if (err) return next(err)
+        if (err) {
+            debug('query error: ' + err)
+            return next(err)
+        }
         if (results.book == null) {
             var err = new Error('Livro não encontrado')
             err.status = 404
@@ -217,7 +236,10 @@ exports.book_update_post = [
                     Genre.find(callback)
                 }
             }, function(err, results) {
-                if (err) return next(err)
+                if (err) {
+                    debug('query error: ' + err)
+                    return next(err)
+                }
 
                 for (let i=0; i < results.genres.length; i++) {
                     if (book.genre.indexOf(results.genres[i]._id) > -1) {
@@ -229,7 +251,10 @@ exports.book_update_post = [
         }
         else {
             Book.findByIdAndUpdate(req.params.id, book, {}, function(err, thebook) {
-                if (err) return next(err)
+                if (err) {
+                    debug('update error: ' + err)
+                    return next(err)
+                }
                 res.redirect(thebook.url)
             })
         }
@@ -246,7 +271,10 @@ exports.book_delete_get = function(req, res, next) {
             BookInstance.find({ 'book': req.params.id }, callback)
         }
     }, function(err, results) {
-        if (err) return next(err)
+        if (err) {
+            debug('query error: ' + err)
+            return next(err)
+        }
         if (results.book == null) {
             res.redirect('/catalog/books')
         }
@@ -266,7 +294,10 @@ exports.book_delete_post = function(req, res, next) {
             BookInstance.find({ 'book': req.body.bookid }, callback)
         }
     }, function(err, results) {
-        if (err) return next(err)
+        if (err) {
+            debug('query error: ' + err)
+            return next(err)
+        }
         if (results.bookinstances.length > 0) {
             res.render('book_delete', { title: 'Excluir livro', book: results.book, bookinstances: results.bookinstances })
         }

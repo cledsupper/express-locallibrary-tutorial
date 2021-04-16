@@ -3,6 +3,7 @@ var Book = require('../models/book')
 
 var async = require('async')
 const { body, validationResult } = require('express-validator')
+var debug = require('debug')('author')
 
 // Mostrar lista de autores
 exports.author_list = function(req, res, next) {
@@ -10,7 +11,10 @@ exports.author_list = function(req, res, next) {
     Author.find()
         .sort([['family_name', 'ascending']])
         .exec(function (err, list_authors) {
-            if (err) { return next(err); }
+            if (err) {
+                debug('query error: ' + err)
+                return next(err)
+            }
 
             res.render('author_list', { title: 'Lista de autores', author_list: list_authors })
         })
@@ -29,7 +33,10 @@ exports.author_detail = function(req, res, next) {
                 .exec(callback)
         }
     }, function(err, results) {
-        if (err) return next(err)
+        if (err) {
+            debug('query error: ' + err)
+            return next(err)
+        }
         if (results.author == null) {
             var err = new Error('Autor não existe')
             err.status = 404
@@ -72,7 +79,10 @@ exports.author_create_post = [
                 date_of_death: req.body.date_of_death
             })
             author.save(function(err) {
-                if (err) return next(err)
+                if (err) {
+                    debug('save error: ' + err)
+                    return next(err)
+                }
                 // Com sucesso, retorna para a página do autor
                 res.redirect(author.url)
             })
@@ -91,7 +101,10 @@ exports.author_delete_get = function(req, res, next) {
         }
     }, function(err, results) {
 
-        if (err) return next(err)
+        if (err) {
+            debug('query error: ' + err)
+            return next(err)
+        }
         if (results.author == null) res.redirect('/catalog/authors')
         res.render('author_delete', { title: 'Excluir autor', author: results.author, author_books: results.books })
 
@@ -109,13 +122,19 @@ exports.author_delete_post = function(req, res, next) {
             Book.find({ 'author': req.body.authorid }, callback)
         }
     }, function(err, results) {
-        if (err) return next(err)
+        if (err) {
+            debug('query error: ' + err)
+            return next(err)
+        }
         if (results.books.length > 0) {
             res.render('author_delete', { title: 'Excluir autor', author: results.author, author_books: results.books })
         }
         else {
             Author.findByIdAndRemove(req.body.authorid, function(err) {
-                if (err) return next(err)
+                if (err) {
+                    debug('delete error: ' + err)
+                    return next(err)
+                }
                 res.redirect('/catalog/authors')
             })
         }
@@ -126,7 +145,10 @@ exports.author_delete_post = function(req, res, next) {
 exports.author_update_get = function(req, res, next) {
 
     Author.findById(req.params.id, function(err, author) {
-        if (err) return next(err)
+        if (err) {
+            debug('query error: ' + err)
+            return next(err)
+        }
         if (!author) {
             var err = new Error('Autor não encontrado')
             err.status = 404
@@ -162,7 +184,10 @@ exports.author_update_post = [
         }
         else {
             Author.findByIdAndUpdate(req.params.id, author, {}, function(err, theauthor) {
-                if (err) return next(err)
+                if (err) {
+                    debug('update error: ' + err)
+                    return next(err)
+                }
                 res.redirect(theauthor.url)
             })
         }

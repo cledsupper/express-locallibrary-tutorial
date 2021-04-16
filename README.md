@@ -15,6 +15,9 @@ Eu utilizei o MongoDB Atlas para este fim.
 
 E, finalmente, rode o app com: ```DEBUG=locallib:* npm start```
 
+## ACESSE O APP HOSPEDADO COM HEROKU
+[Local Library](https://leshto-locallib.herokuapp.com/catalog/)
+
 
 por Ledso!
 
